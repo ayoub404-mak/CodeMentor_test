@@ -1,0 +1,131 @@
+/* Custom Tailwind overrides and Marked.js styling */
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar for a clean look */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #1f2937; /* Tailwind gray-800 */
+}
+::-webkit-scrollbar-thumb {
+    background: #4b5563; /* Tailwind gray-600 */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* Tailwind gray-500 */
+}
+
+/* Markdown Styles (Dark Theme) */
+.markdown-body {
+    color: #d1d5db; /* gray-300 */
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+    color: #f3f4f6; /* gray-100 */
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.markdown-body h1 { font-size: 1.5rem; }
+.markdown-body h2 { font-size: 1.25rem; border-bottom: 1px solid #374151; padding-bottom: 0.3em; }
+.markdown-body h3 { font-size: 1.1rem; }
+
+.markdown-body p, .markdown-body ul, .markdown-body ol {
+    margin-bottom: 1em;
+}
+
+.markdown-body ul { list-style-type: disc; padding-left: 1.5em; }
+.markdown-body ol { list-style-type: decimal; padding-left: 1.5em; }
+
+.markdown-body li { margin-bottom: 0.25em; }
+
+.markdown-body a {
+    color: #60a5fa; /* blue-400 */
+    text-decoration: underline;
+}
+
+.markdown-body strong {
+    color: #f3f4f6;
+    font-weight: 600;
+}
+
+/* Code block container */
+.markdown-body pre {
+    background-color: #111827; /* gray-900 */
+    border: 1px solid #374151; /* gray-700 */
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.5em 0;
+}
+
+/* Inline code */
+.markdown-body code {
+    background-color: #374151; /* gray-700 */
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85em;
+    color: #e5e7eb; /* gray-200 */
+}
+
+/* Don't style code inside pre differently regarding bg */
+.markdown-body pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: 0.9em;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+    border-left: 4px solid #4b5563; /* gray-600 */
+    padding-left: 1rem;
+    color: #9ca3af; /* gray-400 */
+    font-style: italic;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Table styles */
+.markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+}
+
+.markdown-body th, .markdown-body td {
+    border: 1px solid #374151; /* gray-700 */
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.markdown-body th {
+    background-color: #1f2937; /* gray-800 */
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Monaco container height fix */
+#editor-container {
+    height: 100%;
+    width: 100%;
+}

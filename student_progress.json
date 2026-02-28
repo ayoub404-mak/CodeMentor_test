@@ -1,0 +1,19 @@
+{
+  "student_id": "75436a9e-117f-40b1-a358-0b981e3ab5e5",
+  "name": "alic",
+  "level": "beginner",
+  "current_topic": "variables",
+  "completed_topics": [],
+  "current_problem_index": 0,
+  "assessment_score": 10,
+  "learning_path": [],
+  "history": [],
+  "strengths": [],
+  "weaknesses": [
+    "basic_syntax",
+    "problem_solving",
+    "data_structures"
+  ],
+  "total_problems_solved": 0,
+  "streak_days": 1
+}

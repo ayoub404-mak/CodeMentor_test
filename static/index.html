@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMentor AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Markdown parsing & syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <header class="bg-gray-800 border-b border-gray-700 h-14 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center gap-2">
+            <i data-lucide="brain-circuit" class="text-blue-400"></i>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">CodeMentor AI</h1>
+        </div>
+        <div id="nav-user-info" class="hidden flex items-center gap-4 text-sm text-gray-400">
+            <span id="nav-streak"><i data-lucide="flame" class="inline w-4 h-4 text-orange-500"></i> <span id="streak-count">0</span> Day Streak</span>
+            <span id="nav-level" class="px-2 py-1 bg-gray-700 rounded text-xs capitalize">Beginner</span>
+            <span id="nav-name" class="font-medium text-white">Student</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="app-container" class="flex-1 overflow-hidden relative">
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center hidden">
+            <i data-lucide="loader-2" class="w-12 h-12 text-blue-500 animate-spin mb-4"></i>
+            <p id="loading-message" class="text-lg text-gray-300">Loading...</p>
+        </div>
+
+        <!-- View 1: Setup Screen -->
+        <div id="view-setup" class="h-full flex items-center justify-center p-4 hidden">
+            <div class="bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-md w-full shadow-2xl">
+                <div class="text-center mb-8">
+                    <i data-lucide="bot" class="w-16 h-16 text-blue-400 mx-auto mb-4"></i>
+                    <h2 class="text-2xl font-bold text-white mb-2">Welcome to CodeMentor AI</h2>
+                    <p class="text-gray-400">Your personal AI coding tutor. Let's get set up.</p>
+                </div>
+                
+                <form id="setup-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
+                        <input type="text" id="setup-name" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="e.g. Alice">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">AI Provider</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-750 transition-colors provider-radio">
+                                <input type="radio" name="provider" value="mistral" checked class="text-blue-500 focus:ring-blue-500 bg-gray-900 border-gray-600">
+                                <span class="ml-2">Mistral AI</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-750 transition-colors provider-radio">
+                                <input type="radio" name="provider" value="gemini" class="text-blue-500 focus:ring-blue-500 bg-gray-900 border-gray-600">
+                                <span class="ml-2">Google Gemini</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">API Key</label>
+                        <input type="password" id="setup-key" required class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="Paste your API key here">
+                        <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                            <i data-lucide="lock" class="w-3 h-3"></i> Your key stays local and is never shared.
+                        </p>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 mt-6">
+                        Start Learning <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View 2: Assessment Screen -->
+        <div id="view-assessment" class="h-full flex flex-col items-center justify-start p-8 overflow-y-auto hidden">
+            <div class="max-w-3xl w-full">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-white mb-2">Let's Find Your Level</h2>
+                    <p class="text-gray-400">Complete this quick assessment so the AI can craft your personalized curriculum.</p>
+                </div>
+
+                <div id="assessment-content" class="space-y-8">
+                    <!-- dynamically injected by UI -->
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button id="btn-submit-assessment" class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+                        Submit Exam <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 3: Dashboard -->
+        <div id="view-dashboard" class="h-full p-8 overflow-y-auto hidden">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-8">Your Learning Dashboard</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <h3 class="text-gray-400 text-sm font-medium mb-1">Current Level</h3>
+                        <p id="dash-level" class="text-2xl font-bold text-white capitalize">-</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <h3 class="text-gray-400 text-sm font-medium mb-1">Problems Solved</h3>
+                        <p id="dash-solved" class="text-2xl font-bold text-white">-</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-750">
+                        <h3 class="text-gray-400 text-sm font-medium mb-1">Next Topic</h3>
+                        <p id="dash-next-topic" class="text-xl font-bold text-blue-400 mb-4 capitalize">-</p>
+                        <button id="btn-continue-learning" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 w-full rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                            Continue <i data-lucide="play" class="w-4 h-4 text-white"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6">
+                    <h3 class="text-lg font-bold text-white mb-6">Your Path</h3>
+                    <div id="learning-path-visual" class="flex flex-wrap gap-4">
+                        <!-- Path nodes injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 4: Core Learning Interface (Tutorial + IDE) -->
+        <div id="view-learning" class="h-full flex flex-col md:flex-row hidden">
+            
+            <!-- Left Panel: Content -->
+            <div class="w-full md:w-1/2 lg:w-2/5 border-r border-gray-700 bg-gray-800 flex flex-col h-full">
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-700 shrink-0">
+                    <button class="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-blue-500 text-blue-400" id="tab-tutorial">Tutorial</button>
+                    <button class="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition-colors" id="tab-problem">Problem</button>
+                    <button class="flex-1 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition-colors" id="tab-review">AI Review</button>
+                </div>
+                
+                <!-- Content Area -->
+                <div class="flex-1 overflow-y-auto p-6 scrollbar-thin">
+                    <div id="panel-tutorial" class="markdown-body">
+                        <!-- AI Tutorial injected here -->
+                    </div>
+                    <div id="panel-problem" class="hidden">
+                        <h2 id="problem-title" class="text-2xl font-bold text-white mb-2">Problem Title</h2>
+                        <div class="flex gap-2 mb-4">
+                            <span id="problem-difficulty" class="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">Medium</span>
+                            <span id="problem-builds-on" class="px-2 py-1 bg-blue-900/50 text-blue-300 border border-blue-800 rounded text-xs hidden">Builds on previous</span>
+                        </div>
+                        <div id="problem-desc" class="markdown-body text-gray-300 mb-6">
+                            <!-- Desc injected here -->
+                        </div>
+                        
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Test Cases</h3>
+                            <div id="problem-tests" class="space-y-2 font-mono text-sm">
+                                <!-- Tests injected here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="panel-review" class="hidden">
+                        <!-- AI Review injected here -->
+                        <div id="review-content" class="space-y-4">
+                            <p class="text-gray-400 italic">Submit your code to get AI feedback.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Editor & Terminal -->
+            <div class="w-full md:w-1/2 lg:w-3/5 flex flex-col h-full bg-[#1e1e1e]">
+                <!-- Editor Toolbar -->
+                <div class="h-10 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 shrink-0">
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <i data-lucide="file-code" class="w-4 h-4"></i> main.py
+                    </div>
+                    <div class="flex gap-2">
+                         <button id="btn-hint" class="text-xs bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/30 px-3 py-1 rounded transition-colors flex items-center gap-1">
+                            <i data-lucide="lightbulb" class="w-3 h-3 text-yellow-400"></i> Get Hint
+                        </button>
+                        <button id="btn-run" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition-colors flex items-center gap-1">
+                            <i data-lucide="play" class="w-3 h-3 text-white"></i> Run
+                        </button>
+                        <button id="btn-submit" class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded transition-colors flex items-center gap-1">
+                            <i data-lucide="check" class="w-3 h-3 text-white"></i> Submit
+                        </button>
+                        <button id="btn-next-step" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors flex items-center gap-1 hidden">
+                            Next Topic <i data-lucide="arrow-right" class="w-3 h-3 text-white"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Monaco Editor Container -->
+                <div id="editor-container" class="flex-1"></div>
+
+                <!-- Terminal Console -->
+                <div class="h-64 border-t border-gray-700 bg-gray-900 flex flex-col shrink-0">
+                    <div class="h-8 bg-gray-800 border-b border-gray-700 flex items-center px-4 shrink-0 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Terminal Output
+                    </div>
+                    <div id="terminal-output" class="p-4 font-mono text-sm overflow-y-auto flex-1 text-gray-300 whitespace-pre-wrap">Ready.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Hint Modal -->
+        <div id="hint-modal" class="absolute inset-0 bg-black/60 z-40 hidden flex items-center justify-center p-4">
+             <div class="bg-gray-800 p-6 rounded-xl border border-yellow-700/50 max-w-lg w-full shadow-2xl">
+                  <div class="flex items-center gap-3 mb-4 text-yellow-500">
+                      <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                      <h3 class="text-xl font-bold text-white">Socratic Hint</h3>
+                  </div>
+                  <div id="hint-content" class="text-gray-300 text-lg italic mb-6">
+                      <!-- Hint text goes here -->
+                  </div>
+                  <div class="flex justify-end">
+                      <button id="btn-close-hint" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">Close</button>
+                  </div>
+             </div>
+        </div>
+
+    </main>
+
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' } });
+        // Icons init
+        lucide.createIcons();
+    </script>
+    
+    <!-- App Scripts -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/editor.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
